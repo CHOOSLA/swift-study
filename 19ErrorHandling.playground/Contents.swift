@@ -50,9 +50,51 @@ do{
 } catch{
 //  print("구조체 에러 잡힙 : \(error)")
 //  print("구조체 에러 잡힙 : \(error.code) \(error.message)") // 이렇게 바로 못 쓰고 형변환 해야 한다.
-  if let networkError = error as? NetworkError {
+  if let networkError = error as? NetworkError { // as? error가 nil이 아닐경우 형변환
     print("구조체 에러 잡힙 : \(networkError.code) \(networkError.message)")
   } else {
     print("알 수 없는 에러 \(error)")
   }
+}
+
+// MARK: - 자판기 오류 예제
+// 1 ) 오류 메시지가 담긴 enum을 만든다
+enum VendingMachineError: Error {
+  case invalidInput // 사용자가 수량을 잘 못 입력했을 때
+  case insufficientFunds(moneyNeeded: Int) // 돈이 모자를 때
+  case outOfStock // 재고가 없을 떄
+}
+
+class VendingMachine{
+  let itemPrice = 1000
+  var itemCount = 5
+  var deposit = 0
+  
+  // 돈 받기 메서드
+  func receiveMoney(_ money: Int) throws {
+    // 입력한 돈이 0이면 오류를 던진다.
+    guard money > 0 else {
+      throw VendingMachineError.invalidInput
+    }
+    
+    // 오류가 없으면 정상 처리 한다
+    deposit += money
+    print("\(money)원 받음")
+    
+  }
+}
+
+// 자판기 객체 생성
+let machine = VendingMachine()
+// 판매 결과를 전달 받을 변수
+var result: String?
+
+do{
+  try machine.receiveMoney(0)
+}catch VendingMachineError.invalidInput{
+  print("입력받은 돈이 잘 못 되었습니다")
+}catch VendingMachineError.insufficientFunds(let moneyNeeded){
+  print("\(moneyNeeded)원이 부족합니다")
+}catch VendingMachineError.outOfStock{
+  print("수량이 부족합니다")
 }
