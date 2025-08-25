@@ -37,3 +37,64 @@ Task{
   let result = await (user1, user2)
   print(result)
 }
+
+print("--------------------------")
+Task{
+  for i in 1...5{
+    try? await Task.sleep(for :.seconds(1))
+    print("Task1 - \(i)")
+  }
+}
+
+Task{
+  for i in 1...5{
+    try? await Task.sleep(for :.seconds(1))
+    print("Task2 - \(i)")
+  }
+}
+
+Task{
+  for i in 1...5{
+    try? await Task.sleep(for :.seconds(1))
+    print("Task3 - \(i)")
+  }
+}
+
+/// Actor 액터
+/// - 동시성 환경에서 안전하게 상태를 관리하기 위해 나온 타입
+/// - 즉, 여러 테스크가 동시에 접근할 수 있는 데이터(예: 공유변수)를 데이터 경쟁 없이 안전하게 보호해준다.
+
+// 클래스와 비슷. 한 번에 하나의 태스크만 내부 상태에 접근 가능
+// await으로 접근해야 하는 비동기 메서드와 동기 메서드를 구분
+
+actor BankAccount{
+  private var balance : Int = 0
+  
+  // 입금
+  func deposit(_ amount: Int){
+    balance += amount
+  }
+  
+  //출금
+  func withdraw(_ amount: Int){
+    balance -= amount
+  }
+  
+  // 조회
+  func getBalance() -> Int{
+    return balance
+  }
+}
+
+// Actor 사용
+// - await -> 액터의 메서드나 속성 접근 시 비동기 안전하게 접근
+// - 액터 내부에서는 동시성 문제가 자동으로 방지
+// - private 변수처럼 외부에서 직접 접근 불가 -> 안전
+let account = BankAccount()
+Task{
+  await account.deposit(1000)
+  print("입금 후 잔액: \(await account.getBalance())")
+  
+  await account.withdraw(500)
+  print("출금 후 잔액: \(await account.getBalance())")
+}
