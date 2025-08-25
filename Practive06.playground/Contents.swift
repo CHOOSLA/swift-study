@@ -32,23 +32,50 @@ let student3 = Student("Bob")
 student3.addSubjectScore(nil, nil)
 print("학생: \(student3.name ?? "학생이 nil인 경우"), Math 점수: \(student3.subjectScore?["Math"] ?? -1 == -1 ? "과목없음" : "")")
 
-func runTwoTasks(_ name1: String, _ iterations1: Int, _ name2: String, _ iterations2: Int){
-  
-  var result : (String, String)?
+func runTwoTasks(_ name1: String, _ iterations1: Int, _ name2: String, _ iterations2: Int) -> String?{
+
+  var isdone1 = false
+  var isdone2 = false
   
   Task{
-    for idx in 0..<iterations1 {
+    for idx in 1..<iterations1 + 1 {
       print("\(name1): \(idx)")
       try? await Task.sleep(for: .seconds(1))
     }
   }
   
   Task{
-    for idx in 0..<iterations2 {
+    for idx in 1..<iterations2 + 1 {
       print("\(name2): \(idx)")
       try? await Task.sleep(for: .seconds(1))
     }
   }
+  
+  Task{
+    while(true){
+      if(isdone1 && isdone2){
+        return "(\(name1) 완료, \(name2) 완료)"
+      }
+    }
+  }
+  
+  return nil
 }
 
+print(runTwoTasks("Task1", 3, "Task2", 5) ?? "\n")
 
+
+enum ScoreError{
+  case emptyScores
+  case invliadScore(score: Int)
+}
+
+let testCases = [[Int]] = [
+  [90, 80, 70],
+  [],
+  [100, -5, 95]
+]
+
+for t in testCases{
+  
+}
