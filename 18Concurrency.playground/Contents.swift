@@ -98,3 +98,17 @@ Task{
   await account.withdraw(500)
   print("출금 후 잔액: \(await account.getBalance())")
 }
+
+@MainActor
+class ViewModel{
+  var text = ""
+  func updateText(){
+    text = "Hello, World!"
+  }
+}
+
+let vm = ViewModel()
+Task{
+  vm.updateText()
+  print(vm.text)
+}
