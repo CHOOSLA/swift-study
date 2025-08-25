@@ -82,6 +82,17 @@ class VendingMachine{
     print("\(money)원 받음")
     
   }
+  
+  // 물건 팔기 메서드
+  func vend(numberOfItems numberOfitemsToVend: Int) throws -> String{
+    // 구매하려는 수량보다 미리 넣어든 돈이 적으면 오류를 던진다.
+    guard numberOfitemsToVend * itemCount <= deposit else {
+      let moneyNeeded = numberOfitemsToVend * itemCount - deposit
+      throw VendingMachineError.insufficientFunds(moneyNeeded: moneyNeeded)
+    }
+    
+    return "물건팔기 성공!"
+  }
 }
 
 // 자판기 객체 생성
@@ -90,7 +101,9 @@ let machine = VendingMachine()
 var result: String?
 
 do{
-  try machine.receiveMoney(0)
+  try machine.receiveMoney(10)
+  result = try machine.vend(numberOfItems: 10)
+  print("result : \(result)")
 }catch VendingMachineError.invalidInput{
   print("입력받은 돈이 잘 못 되었습니다")
 }catch VendingMachineError.insufficientFunds(let moneyNeeded){
@@ -98,3 +111,8 @@ do{
 }catch VendingMachineError.outOfStock{
   print("수량이 부족합니다")
 }
+
+
+result = try? machine.vend(numberOfItems: 10) // 값이 없을 경우 nil , 있을경우 optional로 감싸진 값
+let result2 = try! machine.vend(numberOfItems: 10) // 에러가 발생할 경우 이경우에는 프로그램이 종료되어 버림
+
