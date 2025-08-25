@@ -65,17 +65,43 @@ func runTwoTasks(_ name1: String, _ iterations1: Int, _ name2: String, _ iterati
 print(runTwoTasks("Task1", 3, "Task2", 5) ?? "\n")
 
 
-enum ScoreError{
+enum ScoreError: Error{
   case emptyScores
   case invliadScore(score: Int)
 }
 
-let testCases = [[Int]] = [
+// 2. 평균 계산 함수
+func calcualteAverage(scores: [Int]) throws -> Double {
+  guard !scores.isEmpty else {
+    throw ScoreError.emptyScores
+  }
+  
+  for score in scores{
+    if score < 0 {
+      throw ScoreError.invliadScore(score: score)
+    }
+  }
+  
+  let total = scores.reduce(0, +)
+  return Double(total) / Double(scores.count)
+}
+
+let testCases:[[Int]] = [
   [90, 80, 70],
   [],
   [100, -5, 95]
 ]
 
-for t in testCases{
-  
+for scores in testCases{
+  do{
+    let avg = try calcualteAverage(scores: scores)
+    print("평균 점수 : \(avg)")
+  }catch ScoreError.emptyScores{
+    print("점수 배열이 비어있습니다!")
+  }catch ScoreError.invliadScore(score: let score){
+    print("잘못된 점수 발견: \(score)")
+  }catch {
+    print("알 수 없는 에러: \(error)")
+  }
 }
+
