@@ -63,4 +63,45 @@ Task{
   print(result)
 }
 
+// 1. 에러 정의
+enum ScoreError: Error{
+  case emptyScores
+  case invalidScore(socre: Int) // 연관값
+}
+
+// 2. 평균 계산 함수
+func calcualteAverage(scores: [Int]) throws -> Double{
+  guard !scores.isEmpty else{
+    throw ScoreError.emptyScores
+  }
+  
+  for score in scores{
+    if score < 0 {
+      throw ScoreError.invalidScore(socre: score)
+    }
+  }
+  
+  let total = scores.reduce(0, +)
+  return Double(total) / Double(scores.count)
+}
+
+// 테스트 실행
+let testCases:[[Int]] = [
+  [90, 80, 70],
+  [],
+  [100, -5, 95]
+]
+
+for scores in testCases{
+  do {
+    let average = try calcualteAverage(scores: scores)
+    print("평균: \(average)")
+  } catch ScoreError.emptyScores {
+    print("점수가 비어 있습니다.")
+  } catch ScoreError.invalidScore(socre: let score){
+    print("잘못된 점수 발견: \(score)")
+  } catch{
+    print("알 수 없는 에러:\(error)")
+  }
+}
 
